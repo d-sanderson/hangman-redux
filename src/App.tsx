@@ -1,17 +1,21 @@
 import { useEffect } from 'react';
 import './App.css'
 import { useAppDispatch, useAppSelector } from './app/hooks';
+import SplineScene from './components/SplineScene';
 import { checkLost, checkWin, reset, setError, setWord, validateGuess } from './features/hangman/hangman-slice';
 import { useLazyFetchWordQuery } from './features/random-word-api-slice/random-word-api-slice';
 
 function App() {
 
-  const [trigger, { isLoading, isError, isSuccess, data, error: lazyError }] = useLazyFetchWordQuery()
-  const hangman = useAppSelector(state => state.hangman)
+  const [trigger, { isLoading, isError, isSuccess, data, error }] = useLazyFetchWordQuery()
+  const hangman = useAppSelector((state) => state.hangman)
   const dispatch = useAppDispatch();
+
 
   // initial load
   useEffect(() => {
+    const handleInput = (e: KeyboardEvent) => dispatch(validateGuess(e.key))
+    document.addEventListener('keydown', handleInput)
     trigger()
   }, [])
 
@@ -19,20 +23,22 @@ function App() {
   useEffect(() => {
     if (isSuccess && data) {
       const [word] = data
-      dispatch(setWord(word))
+      dispatch(setWord(String(word)))
     }
   }, [isSuccess, data])
 
   // failure
   useEffect(() => {
-    if (isError) {
-      dispatch(setError(error.status))
+    if (isError && error) {
+      dispatch(setError(Number(error)))
     }
   }, [isError])
 
   // win
   useEffect(() => {
-    dispatch(checkWin())
+    if(hangman.gameState === 'active') {
+      dispatch(checkWin())
+    }
   }, [hangman.guessedLetters.correct])
 
   // lose
@@ -41,16 +47,17 @@ function App() {
       dispatch(checkLost())
     }
   }, [hangman.triesRemaining])
-  
+
   return (
-    <div className="App">
+    <div>
+      <SplineScene />
       <pre>
       {JSON.stringify(hangman, null, 2)}
       </pre>
       {hangman.gameState === 'lose' &&
         <p>the correct word was <strong>{hangman.word}</strong>.</p>
       }
-      <input type="text" onKeyDown={(e) => dispatch(validateGuess(e.key))} />
+      {/* <input type="text" onKeyDown={(e) => dispatch(validateGuess(e.key))} /> */}
       <button onClick={() => {
         dispatch(reset())
         trigger()

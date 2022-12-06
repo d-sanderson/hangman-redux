@@ -8,7 +8,7 @@ import { Word } from '../random-word-api-slice/random-word-api-slice'
 interface HangmanState {
   gameState: 'inactive' | 'active' | 'win' | 'lose' | 'failure'
   triesRemaining: number,
-  word: string,
+  word: string | null,
   error: null | number,
   guessedLetters: {
     correct: string,
@@ -18,7 +18,7 @@ interface HangmanState {
 
 const initialState: HangmanState = {
   gameState: 'inactive',
-  triesRemaining: 7, word: '', error: null,
+  triesRemaining: 7, word: null, error: null,
   guessedLetters: {
     incorrect: '', correct: ''
   }
