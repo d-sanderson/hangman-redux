@@ -1,14 +1,15 @@
 import { useEffect } from 'react';
 import './App.css'
 import { useAppDispatch, useAppSelector } from './app/hooks';
+import { store } from './app/store';
 import SplineScene from './components/SplineScene';
-import { checkLost, checkWin, reset, setError, setWord, validateGuess } from './features/hangman/hangman-slice';
+import { checkLost, checkWin, HangmanState, reset, setError, setWord, validateGuess } from './features/hangman/hangman-slice';
 import { useLazyFetchWordQuery } from './features/random-word-api-slice/random-word-api-slice';
 
 function App() {
 
-  const [trigger, { isLoading, isError, isSuccess, data, error }] = useLazyFetchWordQuery()
-  const hangman = useAppSelector((state) => state.hangman)
+  const [trigger, { isError, isSuccess, data, error }] = useLazyFetchWordQuery()
+  const hangman = useAppSelector((state: { hangman: HangmanState }) => state.hangman)
   const dispatch = useAppDispatch();
 
 
@@ -57,7 +58,6 @@ function App() {
       {hangman.gameState === 'lose' &&
         <p>the correct word was <strong>{hangman.word}</strong>.</p>
       }
-      {/* <input type="text" onKeyDown={(e) => dispatch(validateGuess(e.key))} /> */}
       <button onClick={() => {
         dispatch(reset())
         trigger()
