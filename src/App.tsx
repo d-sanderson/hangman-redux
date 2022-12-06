@@ -3,7 +3,8 @@ import './App.css'
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { store } from './app/store';
 import SplineScene from './components/SplineScene';
-import { checkLost, checkWin, HangmanState, reset, setError, setWord, validateGuess } from './features/hangman/hangman-slice';
+import { checkLost, checkWin, reset, setError, setWord, validateGuess } from './features/hangman/hangman-slice';
+import { HangmanState } from './features/hangman/hangman-slice.types';
 import { useLazyFetchWordQuery } from './features/random-word-api-slice/random-word-api-slice';
 
 function App() {
